@@ -1,1 +1,1 @@
-# website
+Upload all files to the root of your GitHub repository.
