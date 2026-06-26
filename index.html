@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klaas de Jong — Spatial Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #080808;
+      --gold:  #B8994A;
+      --white: #F0EDE8;
+      --mid:   #4A4A4A;
+      --rule:  rgba(184,153,74,.15);
+      --edge:  32px;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow: hidden;
+    }
+
+    /* ── GRID LINES ─────────────────────────────────────────── */
+    .grid-lines {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    }
+    .grid-lines::before,
+    .grid-lines::after {
+      content: '';
+      position: absolute; top: 0; bottom: 0; width: 1px;
+      background: rgba(184,153,74,.07);
+    }
+    .grid-lines::before { left: 12vw; }
+    .grid-lines::after  { right: 12vw; }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .page {
+      position: relative; z-index: 1;
+      width: 100vw; height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 0 12vw;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      padding-top: var(--edge);
+      padding-bottom: var(--edge);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .logo {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    /* ── HERO ───────────────────────────────────────────────── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* ── EYEBROW — label for the headline, sits tight above it ── */
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp .9s .2s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .eyebrow .sep {
+      display: inline-block;
+      margin: 0 12px;
+      opacity: .35;
+    }
+
+    /* ── HEADLINE ────────────────────────────────────────────── */
+    .headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(48px, 7.5vw, 112px);
+      /* 1.02 gives descenders room without losing drama */
+      line-height: 1.02;
+      letter-spacing: -.01em;
+      color: var(--white);
+      opacity: 0;
+      animation: fadeUp 1.1s .35s cubic-bezier(.22,1,.36,1) forwards;
+    }
+    .headline em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* ── SUPPORTING BLOCK ────────────────────────────────────── */
+    .cta-row {
+      margin-top: 52px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeUp .9s .55s cubic-bezier(.22,1,.36,1) forwards;
+    }
+
+    .vessel {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 14px;
+      color: #787878;
+      letter-spacing: .03em;
+    }
+
+    .sub {
+      font-size: 11px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #686868;
+    }
+
+    .btn-portfolio {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: none;
+      border: 1px solid rgba(184,153,74,.45);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 32px;
+      cursor: pointer;
+      /* single gap mechanism — no double margin */
+      margin-top: 8px;
+      transition: border-color .35s, box-shadow .35s;
+    }
+    .btn-portfolio:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 22px rgba(184,153,74,.18);
+    }
+    .btn-portfolio:hover .arrow {
+      transform: translateX(6px);
+    }
+
+    .arrow {
+      display: inline-block;
+      transition: transform .35s cubic-bezier(.22,1,.36,1);
+      font-size: 14px;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--rule);
+      padding-top: var(--edge);
+      padding-bottom: var(--edge);
+    }
+
+    .city {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    /* ── ANIMATIONS ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── MOBILE ─────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .page { padding: 0 6vw; overflow-y: auto; height: auto; min-height: 100vh; }
+      .grid-lines::before { left: 6vw; }
+      .grid-lines::after  { right: 6vw; }
+      .hero {
+        justify-content: flex-start;
+        padding-top: 40px;
+      }
+      .eyebrow { margin-bottom: 32px; }
+      .headline { font-size: clamp(40px, 12vw, 64px); }
+      .sub { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .eyebrow, .headline, .cta-row { animation: none; opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-lines"></div>
+
+  <div class="page">
+    <header>
+      <div class="logo">Klaas de Jong</div>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Spatial Designer<span class="sep">|</span>Brand Experience<span class="sep">|</span>Retail<span class="sep">|</span>Interior Architecture</p>
+
+      <h1 class="headline">
+        Spaces that<br />
+        speak <em>before</em><br />
+        you do.
+      </h1>
+
+      <div class="cta-row">
+        <span class="vessel">The physical environment is rarely the product. It is the vessel.</span>
+        <p class="sub">Samsung &nbsp;·&nbsp; Nike &nbsp;·&nbsp; Audi &nbsp;·&nbsp; Iittala &nbsp;·&nbsp; Rituals</p>
+        <a href="Klaas_de_Jong_Portfolio.pdf" target="_blank" rel="noopener" class="btn-portfolio">
+          View portfolio <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="city">Berlin, Germany</div>
+    </footer>
+  </div>
+
+</body>
+</html>
